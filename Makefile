@@ -1,11 +1,6 @@
 AUXFILES := LICENSE README.md Makefile
 
-SRCFILES := $(wildcard *.c)
-HDRFILES := $(wildcard *.h)
-
-OBJFILES := $(patsubst %.c, %.o, $(SRCFILES))
-
-EXEC := main
+OBJFILES := tables.o main.o
 
 .PHONY: all clean mrproper
 
@@ -16,12 +11,12 @@ WARNINGS := -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align \
 	-Wuninitialized -Wconversion -Wstrict-prototypes
 CFLAGS := -g -std=c99 $(WARNINGS)
 
-all: $(EXEC)
+all: main
 
-$(EXEC): $(OBJFILES)
+main.o: main.c tables.c tables.h
 	$(CC) $(CFLAGS) -o $@ $<
 
-%.o: %.c
+tables.o: table.c tables.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:

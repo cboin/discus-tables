@@ -49,6 +49,8 @@ struct table_s {
 	struct entry_s * head_entry;
 };
 
+extern struct table_s tables_info[];
+
 /**
  * Return the index of the first occurence of
  * the specified element in this linked list
@@ -69,9 +71,9 @@ struct entry_s * search(unsigned int table_id, int statement);
  * beginning of this linked list.
  *
  * @param table_id the table id.
- * @param entry the element to add.
+ * @param addr_value the addresse of element to add.
  */
-void add_fist(unsigned int table_id, struct entry_s * entry);
+void add_first(unsigned int table_id, struct entry_s * entry, const unsigned char * addr_value);
 
 /**
  * Removes each occurences of the specified
@@ -97,5 +99,14 @@ int delete(unsigned int table_id);
  * data.
  */
 struct entry_s * create_entry(unsigned int table_id);
+
+/**
+ * Display each elements stored into
+ * this list.
+ *
+ * @param table_id the tbla id
+ *
+ */
+void display_list(unsigned int table_id);
 
 #endif
