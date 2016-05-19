@@ -23,7 +23,7 @@
  * the head of the linked list.
  *
  * To delete an element in this list you
- * should use remove function this
+ * should use delete function this
  * function will delete each occurences of
  * entry describe by delete_candidante
  * function.
@@ -41,13 +41,13 @@ typedef short (*delete_candidate_fun) (void * entry);
 struct entry_s {
 	void * value;
 	struct entry_s * next;
-}
+};
 
 struct table_s {
 	purge_candidate_fun is_purge_candidate;
 	delete_candidate_fun is_delete_candidate;
 	struct entry_s * head_entry;
-}
+};
 
 /**
  * Return the index of the first occurence of
@@ -61,7 +61,7 @@ struct table_s {
  * @return The first element or NULL if
  * list does not contain this element.
  */
-entry_s * search(unsigned int table_id, int statement);
+struct entry_s * search(unsigned int table_id, int statement);
 
 
 /**
@@ -71,7 +71,7 @@ entry_s * search(unsigned int table_id, int statement);
  * @param table_id the table id.
  * @param entry the element to add.
  */
-void add_fist(unsigned int table_id, entry_s * entry);
+void add_fist(unsigned int table_id, struct entry_s * entry);
 
 /**
  * Removes each occurences of the specified
@@ -86,7 +86,7 @@ void add_fist(unsigned int table_id, entry_s * entry);
  * the numbers of occurences deleted, Otherwise
  * -1 is returned.
  */
-int remove(unsigned int table_id);
+int delete(unsigned int table_id);
 
 /**
  * Create of an entry ahead in the given table.
@@ -96,6 +96,6 @@ int remove(unsigned int table_id);
  * @return An entry to the speace allocated to store
  * data.
  */
-entry_s * create_entry(unsigned int table_id);
+struct entry_s * create_entry(unsigned int table_id);
 
 #endif
