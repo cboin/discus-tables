@@ -19,6 +19,9 @@ struct entry_s * create_entry(unsigned int table_id)
 
 void add_first(unsigned int table_id, struct entry_s * entry, const unsigned char * addr_value)
 {
+	if (table_id > ((sizeof (tables_info)) / sizeof(struct table_s)))
+		fprintf(stderr, "tables_id is greater than current tables_info size\n");
+
 	struct table_s * td = &tables_info[table_id];
 
 	entry->value = &addr_value;
