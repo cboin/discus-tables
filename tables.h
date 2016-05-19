@@ -35,6 +35,9 @@
  * corresponding entry.
  */
 
+typedef short (*purge_candidate_fun) (void * entry);
+typedef short (*delete_candidate_fun) (void * entry);
+
 struct entry_s {
 	void * value;
 	struct entry_s * next;
