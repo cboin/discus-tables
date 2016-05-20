@@ -64,7 +64,7 @@ extern struct table_s tables_info[];
  * @return The first element or NULL if
  * list does not contain this element.
  */
-struct entry_s * search(unsigned int table_id, );
+struct entry_s * search(unsigned int table_id, func_tst is_func_tst);
 
 
 /**
@@ -89,7 +89,7 @@ void add_first(unsigned int table_id, struct entry_s * entry, const unsigned cha
  * the numbers of occurences deleted, Otherwise
  * -1 is returned.
  */
-int delete(unsigned int table_id);
+int delete(unsigned int table_id, func_tst is_func_tst);
 
 /**
  * Create of an entry ahead in the given table.
