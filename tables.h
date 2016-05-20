@@ -36,8 +36,8 @@
  */
 
 typedef int (* func_tst) (void * entry);
-typedef func_tst (* purge_candidate_fun);
-typedef func_tst (* delete_candidate_fun);
+typedef func_tst (purge_candidate_fun);
+typedef func_tst (delete_candidate_fun);
 
 struct node_s {
 	void * value;
