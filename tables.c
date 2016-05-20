@@ -3,44 +3,63 @@
 
 #include "tables.h"
 
-struct entry_s * create_entry(unsigned int table_id)
+void * insert_entry(unsigned int table_id)
+:q
+:q
 {
-	struct entry_s * entry = (struct entry_s *) malloc(sizeof(struct entry_s));
+	struct table_s * td = &tables_info[table_id];
+	struct node_s * entry = (struct node_s *) malloc(sizeof(struct node_s));
 
 	if (entry != NULL) {
-		entry->value = NULL;
-		entry->next = NULL;
-	} else {
-		fprintf(stderr, "Creatin entry failed\n");
+		if ((entry->value = malloc(td->size_of_entry)) == NULL)
+			perror("malloc");
+		entry->next = td->head_node;
+		td->head_node = entry;
 	}
 
-	return entry;
+	return entry->value;
 }
 
-void add_first(unsigned int table_id, struct entry_s * entry, const unsigned char * addr_value)
+struct node_s * search(unsigned int table_id, func_tst is_func_tst)
 {
-	if (table_id > ((sizeof (tables_info)) / sizeof(struct table_s)))
-		fprintf(stderr, "Tables_id is greater than current tables_info size\n");
-
-	if (entry == NULL)
-		fprintf(stderr, "Trying to store null entry\n");
-
 	struct table_s * td = &tables_info[table_id];
+	struct node_s * entry = td->head_entry;
 
-	entry->value = &addr_value;
-	entry->next = td->head_entry;
+	while (entry != NULL) {
+		if (is_func_tst(entry) == 1)
+			return entry;
 
-	td->head_entry = entry;
-}
+		entry = entry->next;
+	}
 
-struct entry_s * search(unsigned int table_id, func_tst is_func_tst)
-{
 	return NULL;
 }
 
 int delete(unsigned int table_id, func_tst is_func_tst)
 {
-	return -1;
+	struct table_s * td = &tables_info[table_id];
+	struct node_s * entry = td->head_entry;
+	struct node_s * previous_entry = NULL;
+	int deleted_entry = 0;
+
+	while (entry != NULL) {
+		if (is_func_tst(entry) == 1) {
+			if (previous_entry == NULL) {
+				td->head_entry = td->head_entry->next;
+			} else if (entry->next == NULL) {
+				previous_entry->next = NULL;
+			} else {
+				previous_entry-> next = entry->next;
+			}
+
+			deleted_entry += 1;
+		}
+
+		previous_entry = entry;
+		entry = entry->next;
+	}
+
+	return deleted_entry;
 }
 
 void display_list(unsigned int table_id)
@@ -49,7 +68,7 @@ void display_list(unsigned int table_id)
 		fprintf(stderr, "Table_id is greater than size of tables_info\n");
 
 	struct table_s * td = &tables_info[table_id];
-	struct entry_s * ptr = td->head_entry;
+	struct node_s * ptr = td->head_entry;
 
 	printf("[ ");
 

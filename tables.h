@@ -13,7 +13,7 @@
  * To insert new element into a table you
  * have to give this id to create_entry
  * function, this function will returns
- * you a entry_s pointer. To store data
+ * you a node_s pointer. To store data
  * into it you have to type:
  * entry->value = your_value;
  * After this your able to add this entry
@@ -39,15 +39,17 @@ typedef int (* func_tst) (void * entry);
 typedef func_tst (* purge_candidate_fun);
 typedef func_tst (* delete_candidate_fun);
 
-struct entry_s {
+struct node_s {
 	void * value;
-	struct entry_s * next;
+	struct node_s * next;
 };
 
 struct table_s {
 	purge_candidate_fun is_purge_candidate;
 	delete_candidate_fun is_delete_candidate;
-	struct entry_s * head_entry;
+	struct node_s * head_node;
+	unsigned int size_of_entry;
+	unsigned int entry_count;
 };
 
 extern struct table_s tables_info[];
@@ -64,17 +66,8 @@ extern struct table_s tables_info[];
  * @return The first element or NULL if
  * list does not contain this element.
  */
-struct entry_s * search(unsigned int table_id, func_tst is_func_tst);
+struct node_s * search(unsigned int table_id, func_tst is_func_tst);
 
-
-/**
- * Inserts the specified element at the
- * beginning of this linked list.
- *
- * @param table_id the table id.
- * @param addr_value the addresse of element to add.
- */
-void add_first(unsigned int table_id, struct entry_s * entry, const unsigned char * addr_value);
 
 /**
  * Removes each occurences of the specified
@@ -99,7 +92,7 @@ int delete(unsigned int table_id, func_tst is_func_tst);
  * @return An entry to the speace allocated to store
  * data.
  */
-struct entry_s * create_entry(unsigned int table_id);
+void * insert_entry(unsigned int table_id);
 
 /**
  * Display each elements stored into
@@ -109,5 +102,11 @@ struct entry_s * create_entry(unsigned int table_id);
  *
  */
 void display_list(unsigned int table_id);
+
+/**
+ * Create a table
+ * TODO
+ */
+void * create_table(unsigned int table_id, unsigned int row_size, purge_candidate_fun purge_fun, delete_candidate_fun delete_fun);
 
 #endif
