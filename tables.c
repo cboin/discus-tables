@@ -33,12 +33,12 @@ void add_first(unsigned int table_id, struct entry_s * entry, const unsigned cha
 	td->head_entry = entry;
 }
 
-struct entry_s * search(unsigned int table_id, int statement)
+struct entry_s * search(unsigned int table_id, func_tst is_func_tst)
 {
 	return NULL;
 }
 
-int delete(unsigned int table_id)
+int delete(unsigned int table_id, func_tst is_func_tst)
 {
 	return -1;
 }
