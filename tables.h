@@ -107,6 +107,6 @@ void display_list(unsigned int table_id);
  * Create a table
  * TODO
  */
-void * create_table(unsigned int table_id, unsigned int row_size, purge_candidate_fun purge_fun, delete_candidate_fun delete_fun);
+void create_table(unsigned int table_id, unsigned int row_size, purge_candidate_fun purge_fun, delete_candidate_fun delete_fun);
 
 #endif
