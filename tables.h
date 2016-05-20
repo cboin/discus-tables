@@ -35,8 +35,9 @@
  * corresponding entry.
  */
 
-typedef short (*purge_candidate_fun) (void * entry);
-typedef short (*delete_candidate_fun) (void * entry);
+typedef int (* func_tst) (void * entry);
+typedef func_tst (* purge_candidate_fun);
+typedef func_tst (* delete_candidate_fun);
 
 struct entry_s {
 	void * value;
@@ -63,7 +64,7 @@ extern struct table_s tables_info[];
  * @return The first element or NULL if
  * list does not contain this element.
  */
-struct entry_s * search(unsigned int table_id, int statement);
+struct entry_s * search(unsigned int table_id, );
 
 
 /**
