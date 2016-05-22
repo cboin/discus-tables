@@ -15,6 +15,8 @@ void * insert_entry(unsigned int table_id)
 		td->head_node = entry;
 	}
 
+	td->entry_count += 1;
+
 	return entry->value;
 }
 
@@ -41,7 +43,7 @@ int delete(unsigned int table_id, func_tst is_func_tst)
 	int deleted_entry = 0;
 
 	while (entry != NULL) {
-		if (is_func_tst(entry) == 1) {
+		if (is_func_tst(entry) == 0) {
 			if (previous_entry == NULL) {
 				td->head_node = td->head_node->next;
 			} else if (entry->next == NULL) {
@@ -50,6 +52,7 @@ int delete(unsigned int table_id, func_tst is_func_tst)
 				previous_entry-> next = entry->next;
 			}
 
+			td->entry_count -= 1;
 			deleted_entry += 1;
 		}
 
@@ -58,10 +61,6 @@ int delete(unsigned int table_id, func_tst is_func_tst)
 	}
 
 	return deleted_entry;
-}
-
-void display_list(unsigned int table_id)
-{
 }
 
 void create_table(unsigned int table_id, unsigned int row_size, purge_candidate_fun purge_fun, delete_candidate_fun delete_fun)
