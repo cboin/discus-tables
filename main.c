@@ -52,14 +52,16 @@ struct string_s {
 	unsigned int length;
 };
 
-static int string_purge_candidate(void * entry)
+static int string_purge_candidate(void * entry_ptr)
 {
 	return 0;
 }
 
-static int string_delete_candidate(void * entry)
+static int string_delete_candidate(void * entry_ptr)
 {
-	return 0;
+	struct string_s * entry = (struct string_s *) entry_ptr;
+	printf("[Delete func] value: %s\n", entry->value);
+	return strcmp(entry->value, "Hello, world");
 }
 
 int main(void)
@@ -82,7 +84,6 @@ int main(void)
 
 	assert(strcmp(head->first_name, bob_dylan->first_name) == 0);
 	assert(head->phone == bob_dylan->phone);
-	printf("[OK] Insert in head\n");
 
 	struct human_s * denis_ritchie = insert_entry(0);
 
@@ -95,10 +96,8 @@ int main(void)
 
 	assert(found_ritchie->size == denis_ritchie->size);
 	assert(found_ritchie->phone == denis_ritchie->phone);
-	printf("[OK] Insert in head\n");
 
 	assert(td->entry_count == 2);
-	printf("[OK] 2 entry\n");
 
 	/* totally stupid test */
 	struct human_s * brian_kernighan = insert_entry(0);
@@ -113,7 +112,6 @@ int main(void)
 	struct human_s * found_kernighan = search(0, search_brian_kernighan)->value;
 	assert(found_kernighan->size == denis_ritchie->size);
 	assert(found_kernighan->phone == brian_kernighan->phone);
-	printf("[OK] Copy struct into new node\n");
 
 	/*
 	 * END TEST INSERT AND SEARCH
@@ -125,7 +123,23 @@ int main(void)
 	 */
 
 	create_table(1, sizeof(struct string_s), string_purge_candidate, string_delete_candidate);
+	td = &tables_info[1];
 
+	assert(td->head_node == NULL);
+
+	struct string_s * hello_world = insert_entry(1);
+
+	char * s = "Hello, world";
+	hello_world->value = s;
+	hello_world->length = strlen(s);
+
+	assert(td->head_node != NULL);
+
+	struct string_s * tmp = td->head_node->value;
+	assert(hello_world->length == tmp->length);
+
+	int deleted_entry = delete(1, td->is_delete_candidate);
+	assert(td->head_node == NULL);
 
 	/*
 	 * END TEST DELETE AND PURGE

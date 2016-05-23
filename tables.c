@@ -38,26 +38,19 @@ struct node_s * search(unsigned int table_id, func_tst is_func_tst)
 int delete(unsigned int table_id, func_tst is_func_tst)
 {
 	struct table_s * td = &tables_info[table_id];
-	struct node_s * entry = td->head_node;
-	struct node_s * previous_entry = NULL;
+	struct node_s * current = td->head_node;
+	struct node_s * next = NULL;
 	int deleted_entry = 0;
 
-	while (entry != NULL) {
-		if (is_func_tst(entry) == 0) {
-			if (previous_entry == NULL) {
-				td->head_node = td->head_node->next;
-			} else if (entry->next == NULL) {
-				previous_entry->next = NULL;
-			} else {
-				previous_entry-> next = entry->next;
-			}
 
-			td->entry_count -= 1;
-			deleted_entry += 1;
+	while (current != NULL) {
+		if (is_func_tst(current->value) == 0) {
+			next = current->next;
+			free(current);
+			td->head_node = next;
+			printf("Deleted !\n");
 		}
-
-		previous_entry = entry;
-		entry = entry->next;
+		current = next;
 	}
 
 	return deleted_entry;
