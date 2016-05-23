@@ -61,7 +61,7 @@ int delete(unsigned int table_id)
 			} else {
 				prev->next = current->next;
 				free(current);
-				current=prev->next;
+				current = prev->next;
 			}
 			deleted_entry += 1;
 			td->entry_count -= 1;
