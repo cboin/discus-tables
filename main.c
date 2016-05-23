@@ -57,7 +57,7 @@ static int string_purge_candidate(void * entry_ptr)
 	return 0;
 }
 
-static int string_delete_candidate(void * entry_ptr)
+static int hello_world_delete_candidate(void * entry_ptr)
 {
 	struct string_s * entry = (struct string_s *) entry_ptr;
 	return strcmp(entry->value, "Hello, world");
@@ -128,7 +128,7 @@ int main(void)
 	 * TEST DELETE AND PURGE
 	 */
 
-	create_table(1, sizeof(struct string_s), string_purge_candidate, string_delete_candidate, search_hello_world);
+	create_table(1, sizeof(struct string_s), string_purge_candidate, hello_world_delete_candidate, search_hello_world);
 	td = &tables_info[1];
 
 	assert(td->head_node == NULL);
@@ -154,6 +154,29 @@ int main(void)
 
 	/* Here, entry count should be equals to zero */
 	assert(td->entry_count == 0);
+
+
+	struct string_s * foo = insert_entry(1);
+	foo->value = "foo";
+	foo->length = strlen("foo");
+
+	struct string_s * bar = insert_entry(1);
+	bar->value = "bar";
+	bar->length = strlen("bar");
+
+	struct string_s * fum = insert_entry(1);
+	fum->value = "fum";
+	fum->length = strlen("fum");
+
+	/* Now, entry count is equals to three */
+	assert(td->entry_count == 3);
+
+	/* Small display test */
+	struct node_s * current = td->head_node;
+
+	int i;
+	for (i = 0; current != NULL; i++, current = current->next)
+		printf("[%d] value->%s\n", i, ((struct string_s *) current->value)->value);
 
 	/*
 	 * END TEST DELETE AND PURGE
