@@ -9,8 +9,7 @@ void * insert_entry(unsigned int table_id)
 	struct node_s * entry = (struct node_s *) malloc(sizeof(struct node_s));
 
 	if (entry != NULL) {
-		if ((entry->value = malloc(td->size_of_entry)) == NULL)
-			perror("malloc");
+		entry->value = malloc(td->size_of_entry);
 		entry->next = td->head_node;
 		td->head_node = entry;
 	}
@@ -23,7 +22,12 @@ void * insert_entry(unsigned int table_id)
 struct node_s * search(unsigned int table_id, func_tst is_func_tst)
 {
 	struct table_s * td = &tables_info[table_id];
-	struct node_s * entry = td->head_node;
+
+	struct node_s * entry;
+
+	/* if list is empty */
+	if ((entry = td->head_node) == NULL)
+		return NULL;
 
 	while (entry != NULL) {
 		if (is_func_tst(entry) == 1)
@@ -32,6 +36,7 @@ struct node_s * search(unsigned int table_id, func_tst is_func_tst)
 		entry = entry->next;
 	}
 
+	/* element not found */
 	return NULL;
 }
 
@@ -41,16 +46,30 @@ int delete(unsigned int table_id, func_tst is_func_tst)
 	struct node_s * current = td->head_node;
 	struct node_s * next = NULL;
 	int deleted_entry = 0;
+	struct node_s * prev = td->head_node;
 
+	if (td->head_node == NULL)
+		return 0;
 
 	while (current != NULL) {
 		if (is_func_tst(current->value) == 0) {
-			next = current->next;
-			free(current);
-			td->head_node = next;
-			printf("Deleted !\n");
+			if (current == prev) {
+				prev = current->next;
+				free(current);
+				current = prev;
+				td->head_node = current;
+			} else {
+				prev->next = current->next;
+				free(current);
+				current=prev->next;
+			}
+
+			deleted_entry += 1;
+			td->entry_count -= 1;
+		} else {
+			prev = current;
+			current = prev->next;
 		}
-		current = next;
 	}
 
 	return deleted_entry;
@@ -64,5 +83,5 @@ void create_table(unsigned int table_id, unsigned int row_size, purge_candidate_
 	td->entry_count = 0;
 	td->is_purge_candidate = purge_fun;
 	td->is_delete_candidate = delete_fun;
-	td->head_node = NULL;
+	td->head_node = ((void *) 0);
 }

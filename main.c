@@ -64,6 +64,12 @@ static int string_delete_candidate(void * entry_ptr)
 	return strcmp(entry->value, "Hello, world");
 }
 
+static int search_hello_world(void * entry_ptr)
+{
+	struct string_s * entry = (struct string_s *) entry_ptr;
+	return ((strcmp(entry->value, "Hello, world")) && (entry->length == strlen("Hello, world")));
+}
+
 int main(void)
 {
 	/*
@@ -140,7 +146,12 @@ int main(void)
 
 	int deleted_entry = delete(1, td->is_delete_candidate);
 	assert(td->head_node == NULL);
+	assert(deleted_entry == 1);
 
+	/* Search after NULL node */
+	struct node_s * deleted = search(1, search_hello_world);
+	assert(deleted == NULL);
+	assert(td->head_node == NULL);
 	/*
 	 * END TEST DELETE AND PURGE
 	 */
