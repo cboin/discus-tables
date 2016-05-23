@@ -29,14 +29,6 @@ static int human_delete_candidate(void * entry_ptr)
 	return entry->phone == 0;
 }
 
-void display_entry(struct human_s * entry)
-{
-	printf("First name: %s\n", entry->first_name);
-	printf("Last name: %s\n", entry->last_name);
-	printf("Phone: %d\n", entry->phone);
-	printf("Size: %f\n", entry->size);
-}
-
 static int search_denis_ritchie(void * entry_ptr)
 {
 	struct human_s * entry = (struct human_s *) entry_ptr;
@@ -53,6 +45,21 @@ static int search_brian_kernighan(void * entry_ptr)
 {
 	struct human_s * entry = (struct human_s *) entry_ptr;
 	return ((strcmp(entry->first_name, "Biran") && (strcmp(entry->last_name, "Kernighan"))));
+}
+
+struct string_s {
+	char * value;
+	unsigned int length;
+};
+
+static int string_purge_candidate(void * entry)
+{
+	return 0;
+}
+
+static int string_delete_candidate(void * entry)
+{
+	return 0;
 }
 
 int main(void)
@@ -97,6 +104,7 @@ int main(void)
 	struct human_s * brian_kernighan = insert_entry(0);
 	memcpy(brian_kernighan, denis_ritchie, td->size_of_entry);
 
+	/* Change some value */
 	brian_kernighan->first_name = "Biran";
 	brian_kernighan->last_name = "Kernighan";
 	brian_kernighan->phone = 0;
@@ -109,6 +117,18 @@ int main(void)
 
 	/*
 	 * END TEST INSERT AND SEARCH
+	 */
+
+
+	/*
+	 * TEST DELETE AND PURGE
+	 */
+
+	create_table(1, sizeof(struct string_s), string_purge_candidate, string_delete_candidate);
+
+
+	/*
+	 * END TEST DELETE AND PURGE
 	 */
 
 	return EXIT_SUCCESS;
