@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "tables.h"
 
@@ -42,23 +43,39 @@ static int search_denis_ritchie(void * entry_ptr)
 	return ((strcmp(entry->first_name, "Denis") && (strcmp(entry->last_name, "Ritchie"))));
 }
 
-static int search_bob_dyaln(void * entry_ptr)
+static int search_bob_dylan(void * entry_ptr)
 {
 	struct human_s * entry = (struct human_s *) entry_ptr;
 	return ((strcmp(entry->first_name, "Bob") && (strcmp(entry->last_name, "Dylan"))));
 }
+
+static int search_brian_kernighan(void * entry_ptr)
+{
+	struct human_s * entry = (struct human_s *) entry_ptr;
+	return ((strcmp(entry->first_name, "Biran") && (strcmp(entry->last_name, "Kernighan"))));
+}
+
 int main(void)
 {
+	/*
+	 * TEST INSERT AND SEARCH
+	 */
+
 	create_table(0, sizeof(struct human_s), human_purge_candidate, human_delete_candidate);
 
-	struct human_s * bob_dyaln = insert_entry(0);
+	struct table_s * td = &tables_info[0];
+	struct human_s * bob_dylan = insert_entry(0);
 
-	bob_dyaln->first_name = "Bob";
-	bob_dyaln->last_name = "Dyaln";
-	bob_dyaln->phone = 800976456;
-	bob_dyaln->size = 1.78;
+	bob_dylan->first_name = "Bob";
+	bob_dylan->last_name = "Dylan";
+	bob_dylan->phone = 800976456;
+	bob_dylan->size = 1.78;
 
-	display_entry(bob_dyaln);
+	struct human_s * head = td->head_node->value;
+
+	assert(strcmp(head->first_name, bob_dylan->first_name) == 0);
+	assert(head->phone == bob_dylan->phone);
+	printf("[OK] Insert in head\n");
 
 	struct human_s * denis_ritchie = insert_entry(0);
 
@@ -67,25 +84,32 @@ int main(void)
 	denis_ritchie->phone = 623454321;
 	denis_ritchie->size = 1.88;
 
-	struct node_s * found_ritchie = search(0, search_denis_ritchie);	
+	struct human_s * found_ritchie = search(0, search_denis_ritchie)->value;
 
-	display_entry(found_ritchie->value);
+	assert(found_ritchie->size == denis_ritchie->size);
+	assert(found_ritchie->phone == denis_ritchie->phone);
+	printf("[OK] Insert in head\n");
 
+	assert(td->entry_count == 2);
+	printf("[OK] 2 entry\n");
 
 	/* totally stupid test */
-	struct table_s * td = &tables_info[0];
 	struct human_s * brian_kernighan = insert_entry(0);
 	memcpy(brian_kernighan, denis_ritchie, td->size_of_entry);
 
 	brian_kernighan->first_name = "Biran";
 	brian_kernighan->last_name = "Kernighan";
-	
+	brian_kernighan->phone = 0;
+
 	/* But that works */
-	display_entry(brian_kernighan);
+	struct human_s * found_kernighan = search(0, search_brian_kernighan)->value;
+	assert(found_kernighan->size == denis_ritchie->size);
+	assert(found_kernighan->phone == brian_kernighan->phone);
+	printf("[OK] Copy struct into new node\n");
 
-	printf("Entry count; %d\n", td->entry_count);
+	/*
+	 * END TEST INSERT AND SEARCH
+	 */
 
-	/* TODO: test delete */
-	
 	return EXIT_SUCCESS;
 }
