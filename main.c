@@ -44,7 +44,7 @@ static int search_bob_dylan(void * entry_ptr)
 static int search_brian_kernighan(void * entry_ptr)
 {
 	struct human_s * entry = (struct human_s *) entry_ptr;
-	return ((strcmp(entry->first_name, "Biran") && (strcmp(entry->last_name, "Kernighan"))));
+	return ((strcmp(entry->first_name, "Brian") && (strcmp(entry->last_name, "Kernighan"))));
 }
 
 struct string_s {
@@ -60,7 +60,6 @@ static int string_purge_candidate(void * entry_ptr)
 static int string_delete_candidate(void * entry_ptr)
 {
 	struct string_s * entry = (struct string_s *) entry_ptr;
-	printf("[Delete func] value: %s\n", entry->value);
 	return strcmp(entry->value, "Hello, world");
 }
 
@@ -76,7 +75,7 @@ int main(void)
 	 * TEST INSERT AND SEARCH
 	 */
 
-	create_table(0, sizeof(struct human_s), human_purge_candidate, human_delete_candidate);
+	create_table(0, sizeof(struct human_s), human_purge_candidate, human_delete_candidate, search_denis_ritchie);
 
 	struct table_s * td = &tables_info[0];
 	struct human_s * bob_dylan = insert_entry(0);
@@ -98,7 +97,7 @@ int main(void)
 	denis_ritchie->phone = 623454321;
 	denis_ritchie->size = 1.88;
 
-	struct human_s * found_ritchie = search(0, search_denis_ritchie)->value;
+	struct human_s * found_ritchie = search(0)->value;
 
 	assert(found_ritchie->size == denis_ritchie->size);
 	assert(found_ritchie->phone == denis_ritchie->phone);
@@ -115,7 +114,8 @@ int main(void)
 	brian_kernighan->phone = 0;
 
 	/* But that works */
-	struct human_s * found_kernighan = search(0, search_brian_kernighan)->value;
+	td->is_search_candidate = search_brian_kernighan;
+	struct human_s * found_kernighan = search(0)->value;
 	assert(found_kernighan->size == denis_ritchie->size);
 	assert(found_kernighan->phone == brian_kernighan->phone);
 
@@ -128,7 +128,7 @@ int main(void)
 	 * TEST DELETE AND PURGE
 	 */
 
-	create_table(1, sizeof(struct string_s), string_purge_candidate, string_delete_candidate);
+	create_table(1, sizeof(struct string_s), string_purge_candidate, string_delete_candidate, search_hello_world);
 	td = &tables_info[1];
 
 	assert(td->head_node == NULL);
@@ -144,14 +144,17 @@ int main(void)
 	struct string_s * tmp = td->head_node->value;
 	assert(hello_world->length == tmp->length);
 
-	int deleted_entry = delete(1, td->is_delete_candidate);
-	assert(td->head_node == NULL);
+	int deleted_entry = delete(1);
 	assert(deleted_entry == 1);
 
 	/* Search after NULL node */
-	struct node_s * deleted = search(1, search_hello_world);
+	struct node_s * deleted = search(1);
 	assert(deleted == NULL);
 	assert(td->head_node == NULL);
+
+	/* Here, entry count should be equals to zero */
+	assert(td->entry_count == 0);
+
 	/*
 	 * END TEST DELETE AND PURGE
 	 */

@@ -19,7 +19,7 @@ void * insert_entry(unsigned int table_id)
 	return entry->value;
 }
 
-struct node_s * search(unsigned int table_id, func_tst is_func_tst)
+struct node_s * search(unsigned int table_id)
 {
 	struct table_s * td = &tables_info[table_id];
 
@@ -30,7 +30,7 @@ struct node_s * search(unsigned int table_id, func_tst is_func_tst)
 		return NULL;
 
 	while (entry != NULL) {
-		if (is_func_tst(entry) == 1)
+		if (td->is_search_candidate(entry) == 1)
 			return entry;
 
 		entry = entry->next;
@@ -40,7 +40,7 @@ struct node_s * search(unsigned int table_id, func_tst is_func_tst)
 	return NULL;
 }
 
-int delete(unsigned int table_id, func_tst is_func_tst)
+int delete(unsigned int table_id)
 {
 	struct table_s * td = &tables_info[table_id];
 	struct node_s * current = td->head_node;
@@ -52,7 +52,7 @@ int delete(unsigned int table_id, func_tst is_func_tst)
 		return 0;
 
 	while (current != NULL) {
-		if (is_func_tst(current->value) == 0) {
+		if (td->is_delete_candidate(current->value) == 0) {
 			if (current == prev) {
 				prev = current->next;
 				free(current);
@@ -63,7 +63,6 @@ int delete(unsigned int table_id, func_tst is_func_tst)
 				free(current);
 				current=prev->next;
 			}
-
 			deleted_entry += 1;
 			td->entry_count -= 1;
 		} else {
@@ -75,7 +74,7 @@ int delete(unsigned int table_id, func_tst is_func_tst)
 	return deleted_entry;
 }
 
-void create_table(unsigned int table_id, unsigned int row_size, purge_candidate_fun purge_fun, delete_candidate_fun delete_fun)
+void create_table(unsigned int table_id, unsigned int row_size, purge_candidate_fun purge_fun, delete_candidate_fun delete_fun, search_candidate_fun search_fun)
 {
 	struct table_s * td = &tables_info[table_id];
 
@@ -83,5 +82,6 @@ void create_table(unsigned int table_id, unsigned int row_size, purge_candidate_
 	td->entry_count = 0;
 	td->is_purge_candidate = purge_fun;
 	td->is_delete_candidate = delete_fun;
-	td->head_node = ((void *) 0);
+	td->is_search_candidate = search_fun;
+	td->head_node = NULL;
 }
