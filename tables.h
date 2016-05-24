@@ -38,8 +38,7 @@
 typedef int (* func_tst) (void * entry);
 typedef func_tst (purge_candidate_fun);
 typedef func_tst (delete_candidate_fun);
-typedef func_tst (search_candidate_fun);
-typedef func_tst (free_entry_fun);
+typedef func_tst (free_entry_candidate_fun);
 
 struct node_s {
 	void * value;
@@ -49,7 +48,7 @@ struct node_s {
 struct table_s {
 	purge_candidate_fun is_purge_candidate;
 	delete_candidate_fun is_delete_candidate;
-	free_entry_fun free_entry;
+	free_entry_candidate_fun free_entry_candidate;
 	struct node_s * head_node;
 	unsigned int size_of_entry;
 	unsigned int entry_count;
@@ -107,11 +106,25 @@ void * insert_entry(unsigned int table_id);
 void display_list(unsigned int table_id);
 
 /**
- * Create a table
- * TODO
+ * Create a table, to store sizeof entry, purge, delete, and
+ * free entry functions. This functions will keep a pointer
+ * to the first entry of our linked list.
+ *
+ * @param table_id Id of the table.
+ * @param size_of_entry The size of entry.
+ * @param purge_fun How the table will be purged.
+ * @param delete_fun How an item of this list will deleted.
+ * @param free_entry_fun Precise how free_table will free each entry.
  */
-void create_table(unsigned int table_id, unsigned int row_size, purge_candidate_fun purge_fun, delete_candidate_fun delete_fun);
+void create_table(unsigned int table_id, unsigned int row_size, purge_candidate_fun purge_fun, delete_candidate_fun delete_fun, free_entry_candidate_fun free_entry_fun);
 
+/**
+ * Free each entry of pointer head_node
+ * This pointer keep the address of the first
+ * item of our linked list.
+ *
+ * @param table_id Id the the table.
+ */
 void free_table(unsigned int table_id);
 
 #endif

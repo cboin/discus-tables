@@ -44,6 +44,13 @@ static int search_brian_kernighan(void * entry_ptr)
 	return ((strcmp(entry->first_name, "Brian") && (strcmp(entry->last_name, "Kernighan"))));
 }
 
+static int human_free_entry(void * entry_ptr)
+{
+	struct human_s * entry = (struct human_s *) entry_ptr;
+	free(entry);
+
+	return 0;
+}
 struct string_s {
 	char * value;
 	unsigned int length;
@@ -70,7 +77,7 @@ static int bar_delete_candidate(void * entry_ptr)
 {
 	struct string_s * entry = (struct string_s *) entry_ptr;
 	return strcmp(entry->value, "bar");
-}	
+}
 
 static int foo_delete_candidate(void * entry_ptr)
 {
@@ -84,13 +91,22 @@ static int search_foo(void * entry_ptr)
 	return strcmp(entry->value, "foo");
 }
 
+static int string_free_entry(void * entry_ptr)
+{
+	struct string_s * entry = (struct string_s *) entry_ptr;
+	free(entry);
+	entry = NULL;
+
+	return 0;
+}
+
 int main(void)
 {
 	/*
 	 * TEST INSERT AND SEARCH
 	 */
 
-	create_table(0, sizeof(struct human_s), human_purge_candidate, human_delete_candidate);
+	create_table(0, sizeof(struct human_s), human_purge_candidate, human_delete_candidate, human_free_entry);
 
 	struct table_s * td = &tables_info[0];
 	struct human_s * bob_dylan = insert_entry(0);
@@ -144,7 +160,7 @@ int main(void)
 	 * TEST DELETE AND PURGE
 	 */
 
-	create_table(1, sizeof(struct string_s), string_purge_candidate, hello_world_delete_candidate);
+	create_table(1, sizeof(struct string_s), string_purge_candidate, hello_world_delete_candidate, string_free_entry);
 	td = &tables_info[1];
 
 	/* Our fresh list should not contain any item */
