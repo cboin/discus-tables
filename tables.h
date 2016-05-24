@@ -39,6 +39,7 @@ typedef int (* func_tst) (void * entry);
 typedef func_tst (purge_candidate_fun);
 typedef func_tst (delete_candidate_fun);
 typedef func_tst (search_candidate_fun);
+typedef func_tst (free_entry_fun);
 
 struct node_s {
 	void * value;
@@ -48,7 +49,7 @@ struct node_s {
 struct table_s {
 	purge_candidate_fun is_purge_candidate;
 	delete_candidate_fun is_delete_candidate;
-	search_candidate_fun is_search_candidate;
+	free_entry_fun free_entry;
 	struct node_s * head_node;
 	unsigned int size_of_entry;
 	unsigned int entry_count;
@@ -68,7 +69,7 @@ extern struct table_s tables_info[];
  * @return The first element or NULL if
  * list does not contain this element.
  */
-struct node_s * search(unsigned int table_id);
+struct node_s * search(unsigned int table_id, func_tst is_func_tst);
 
 
 /**
@@ -84,7 +85,7 @@ struct node_s * search(unsigned int table_id);
  * the numbers of occurences deleted, Otherwise
  * -1 is returned.
  */
-int delete(unsigned int table_id);
+int delete(unsigned int table_id, func_tst is_func_tst);
 
 /**
  * Create of an entry ahead in the given table.
@@ -109,6 +110,8 @@ void display_list(unsigned int table_id);
  * Create a table
  * TODO
  */
-void create_table(unsigned int table_id, unsigned int row_size, purge_candidate_fun purge_fun, delete_candidate_fun delete_fun, search_candidate_fun search_fun);
+void create_table(unsigned int table_id, unsigned int row_size, purge_candidate_fun purge_fun, delete_candidate_fun delete_fun);
+
+void free_table(unsigned int table_id);
 
 #endif

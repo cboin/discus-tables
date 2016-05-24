@@ -90,7 +90,7 @@ int main(void)
 	 * TEST INSERT AND SEARCH
 	 */
 
-	create_table(0, sizeof(struct human_s), human_purge_candidate, human_delete_candidate, search_denis_ritchie);
+	create_table(0, sizeof(struct human_s), human_purge_candidate, human_delete_candidate);
 
 	struct table_s * td = &tables_info[0];
 	struct human_s * bob_dylan = insert_entry(0);
@@ -114,7 +114,7 @@ int main(void)
 	denis_ritchie->size = 1.88;
 
 	/* We search after Ritchie */
-	struct human_s * found_ritchie = search(0)->value;
+	struct human_s * found_ritchie = search(0, search_denis_ritchie)->value;
 
 	assert(found_ritchie->size == denis_ritchie->size);
 	assert(found_ritchie->phone == denis_ritchie->phone);
@@ -132,8 +132,7 @@ int main(void)
 	brian_kernighan->phone = 0;
 
 	/* But that works */
-	td->is_search_candidate = search_brian_kernighan;
-	struct human_s * found_kernighan = search(0)->value;
+	struct human_s * found_kernighan = search(0, search_brian_kernighan)->value;
 	assert(found_kernighan->size == denis_ritchie->size);
 	assert(found_kernighan->phone == brian_kernighan->phone);
 
@@ -145,7 +144,7 @@ int main(void)
 	 * TEST DELETE AND PURGE
 	 */
 
-	create_table(1, sizeof(struct string_s), string_purge_candidate, hello_world_delete_candidate, search_hello_world);
+	create_table(1, sizeof(struct string_s), string_purge_candidate, hello_world_delete_candidate);
 	td = &tables_info[1];
 
 	/* Our fresh list should not contain any item */
@@ -166,11 +165,11 @@ int main(void)
 	assert(hello_world->length == tmp->length);
 
 	/* We will remove the head of list */
-	int deleted_entry = delete(1);
+	int deleted_entry = delete(1, hello_world_delete_candidate);
 	assert(deleted_entry == 1);
 
 	/* Search after NULL node */
-	struct node_s * deleted = search(1);
+	struct node_s * deleted = search(1, search_hello_world);
 	assert(deleted == NULL);
 	assert(td->head_node == NULL);
 
@@ -201,32 +200,31 @@ int main(void)
 		printf("[%d] value->%s\n", i, ((struct string_s *) current->value)->value);
 
 	/* If we try to delete into the middle of our list */
-	td->is_delete_candidate = bar_delete_candidate;
-	deleted_entry = delete(1);
+	deleted_entry = delete(1, bar_delete_candidate);
 	assert(deleted_entry == 1);
 
 	/* Fine */
 	assert(td->entry_count == 2);
-	
+
 	struct string_s * pwet = insert_entry(1);
 	pwet->value = "pwet";
 	pwet->length = strlen("pwet");
 
-	td->is_delete_candidate = foo_delete_candidate;
-	deleted_entry = delete(1);
+	deleted_entry = delete(1, foo_delete_candidate);
 
 	/* The tail was deleted */
 	assert(td->entry_count == 2);
 
 	/* If we search after the old tail, search should return NULL */
-	td->is_search_candidate = search_foo;
-
-	struct node_s * old_tail = search(1);
+	struct node_s * old_tail = search(1, search_foo);
 	assert(old_tail == NULL);
 
 	/*
 	 * END TEST DELETE AND PURGE
 	 */
+
+	free_table(0);
+	free_table(1);
 
 	return EXIT_SUCCESS;
 }
